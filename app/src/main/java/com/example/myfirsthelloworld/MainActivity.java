@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -16,18 +17,16 @@ import androidx.core.content.ContextCompat;
 
 import java.util.concurrent.Executors;
 
+@ExperimentalGetImage
 public class MainActivity extends ComponentActivity {
     private PreviewView previewView;
 
-    private final ActivityResultContracts.RequestPermission requestPermissionContract =
-            new ActivityResultContracts.RequestPermission();
-
     private final androidx.activity.result.ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(requestPermissionContract, isGranted -> {
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     startCamera();
                 } else {
-                    Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Camera permission is required", Toast.LENGTH_LONG).show();
                 }
             });
 
