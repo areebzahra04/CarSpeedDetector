@@ -53,4 +53,6 @@ dependencies {
 
     // ML Kit Object Detection
     implementation("com.google.mlkit:object-detection:17.0.1")
+
+    implementation("androidx.cardview:cardview:1.0.0")
 }
