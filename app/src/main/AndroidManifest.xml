@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyFirstHelloWorld">
 
-        <!-- Start Screen opens first -->
+        <!-- Start Screen -->
         <activity
             android:name=".StartActivity"
             android:exported="true">

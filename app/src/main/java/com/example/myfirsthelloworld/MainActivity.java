@@ -2,11 +2,13 @@ package com.example.myfirsthelloworld;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.OptIn;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
@@ -17,9 +19,11 @@ import androidx.core.content.ContextCompat;
 
 import java.util.concurrent.Executors;
 
-@ExperimentalGetImage
+@OptIn(markerClass = ExperimentalGetImage.class)
 public class MainActivity extends ComponentActivity {
     private PreviewView previewView;
+    private CarSpeedAnalyzer analyzer;
+    private Button lockButton;
 
     private final androidx.activity.result.ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -54,12 +58,27 @@ public class MainActivity extends ComponentActivity {
 
                 BoundingBoxView boundingBoxView = findViewById(R.id.boundingBoxView);
                 TextView speedTextView = findViewById(R.id.speedText);
+                lockButton = findViewById(R.id.lockButton);
 
-                CarSpeedAnalyzer analyzer = new CarSpeedAnalyzer((box, id, speed) -> {
+                analyzer = new CarSpeedAnalyzer((box, id, speed, locked) -> {
                     runOnUiThread(() -> {
                         boundingBoxView.setBoundingBox(box);
-                        speedTextView.setText(String.format("%.1f km/h", speed));
+                        speedTextView.setText(String.format("%.0f", speed));
+
+                        if (locked) {
+                            lockButton.setText("LOCKED");
+                            lockButton.setBackgroundColor(0xFF4CAF50);
+                        } else {
+                            lockButton.setText("LOCK SPEED");
+                            lockButton.setBackgroundColor(0xFFFF9800);
+                        }
                     });
+                });
+
+                lockButton.setOnClickListener(v -> {
+                    if (analyzer != null) {
+                        analyzer.toggleLock();
+                    }
                 });
 
                 ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
