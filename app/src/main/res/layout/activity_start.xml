@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1A1A2E"
+    android:background="#0D0D0D"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,58 +11,103 @@
         android:layout_height="wrap_content"
         android:paddingBottom="40dp">
 
-        <!-- Car Icon -->
-        <TextView
-            android:id="@+id/carIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🏎️"
-            android:textSize="80sp"
+        <!-- Speedometer Circle -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/speedometerCard"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            app:cardCornerRadius="110dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardElevation="15dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="80dp" />
+            android:layout_marginTop="80dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <!-- Speedometer Needle Icon -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⬆️"
+                    android:textSize="40sp"
+                    android:rotation="45" />
+
+                <!-- Speed Value (0-200 design) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0-200"
+                    android:textSize="12sp"
+                    android:textColor="#4A90E2"
+                    android:letterSpacing="0.15"
+                    android:layout_marginTop="15dp" />
+
+                <!-- Unit -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="km/h"
+                    android:textSize="14sp"
+                    android:textColor="#888888"
+                    android:layout_marginTop="5dp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <!-- Title -->
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Car Speed\nDetector"
-            android:textSize="38sp"
+            android:text="CAR SPEED"
+            android:textSize="28sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/carIcon"
+            android:letterSpacing="0.1"
+            app:layout_constraintTop_toBottomOf="@id/speedometerCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="30dp" />
 
         <!-- Subtitle -->
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Real-time vehicle speed measurement\nusing ML Kit Object Detection"
-            android:textSize="14sp"
-            android:textColor="#AAAAAA"
-            android:gravity="center"
+            android:text="DETECTOR"
+            android:textSize="20sp"
+            android:textColor="#4A90E2"
+            android:textStyle="bold"
+            android:letterSpacing="0.15"
             app:layout_constraintTop_toBottomOf="@id/titleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="5dp" />
 
-        <!-- START Button -->
-        <Button
-            android:id="@+id/startButton"
+        <!-- Divider Line -->
+        <View
+            android:layout_width="100dp"
+            android:layout_height="2dp"
+            android:background="#333333"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="30dp" />
+
+        <!-- Description -->
+        <TextView
             android:layout_width="0dp"
-            android:layout_height="55dp"
-            android:text="START DETECTION"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:backgroundTint="#E91E63"
+            android:layout_height="wrap_content"
+            android:text="Real-time vehicle speed measurement using AI"
+            android:textSize="13sp"
+            android:textColor="#888888"
+            android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/titleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,32 +115,35 @@
             android:layout_marginEnd="40dp"
             android:layout_marginTop="60dp" />
 
-        <!-- Instructions -->
-        <TextView
+        <!-- Start Button -->
+        <Button
+            android:id="@+id/startButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="📱 Mount phone on stable surface\n🚗 Point camera at moving vehicle\n🔒 Use LOCK button to freeze speed"
-            android:textSize="13sp"
-            android:textColor="#888888"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/startButton"
+            android:layout_height="55dp"
+            android:text="START"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:backgroundTint="#2A2A2A"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginTop="30dp" />
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginTop="110dp" />
 
         <!-- Footer -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Powered by Google ML Kit"
-            android:textSize="11sp"
-            android:textColor="#555555"
+            android:text="ML KIT POWERED"
+            android:textSize="10sp"
+            android:textColor="#333333"
+            android:letterSpacing="0.2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="30dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

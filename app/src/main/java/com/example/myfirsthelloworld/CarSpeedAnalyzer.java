@@ -69,10 +69,11 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
                 int height = imageProxy.getHeight();
 
                 // Box in EXACT CENTER of screen
-                int boxW = (int)(width * 0.65);
-                int boxH = (int)(height * 0.45);
-                int left = (width - boxW) / 2;
-                int top = (height - boxH) / 2;  // This centers it vertically
+                int boxW = (int)(width * 0.80) ;
+                int boxH = (int)(height * 0.65);
+                int left = (width - boxW) / 2 +20 ;
+                int top = (height - boxH) / 2 + 400;  // This centers it vertically
+
 
                 fixedBox = new Rect(left, top, left + boxW, top + boxH);
                 boxInitialized = true;

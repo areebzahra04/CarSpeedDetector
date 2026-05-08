@@ -10,42 +10,44 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class BoundingBoxView extends View {
-    private Rect boundingBox;
-    private Paint paint;
+    private Rect detectedBox;
+    private Paint boxPaint;
     private Paint textPaint;
 
     public BoundingBoxView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        paint = new Paint();
-        paint.setColor(Color.GREEN);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(6f);
-        paint.setPathEffect(new DashPathEffect(new float[]{20, 15}, 0));
+        // Paint for detected object box
+        boxPaint = new Paint();
+        boxPaint.setColor(Color.GREEN);
+        boxPaint.setStyle(Paint.Style.STROKE);
+        boxPaint.setStrokeWidth(8f);
 
+        // Paint for text
         textPaint = new Paint();
-        textPaint.setColor(Color.GREEN);
-        textPaint.setTextSize(40f);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(32f);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setAlpha(180);
     }
 
     public void setBoundingBox(Rect box) {
-        this.boundingBox = box;
+        this.detectedBox = box;
         invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (boundingBox != null) {
-            // Draw the rectangle
-            canvas.drawRect(boundingBox, paint);
 
-            // Draw label
-            canvas.drawText("DETECTION ZONE",
-                    boundingBox.centerX(),
-                    boundingBox.centerY(),
+        if (detectedBox != null) {
+            // Draw box around detected object
+            canvas.drawRect(detectedBox, boxPaint);
+
+            // Draw label above the box
+            textPaint.setColor(Color.GREEN);
+            canvas.drawText("OBJECT DETECTED",
+                    detectedBox.centerX(),
+                    detectedBox.top - 20,
                     textPaint);
         }
     }
