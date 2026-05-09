@@ -3,6 +3,7 @@ package com.example.myfirsthelloworld;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,17 @@ public class MainActivity extends ComponentActivity {
     private PreviewView previewView;
     private CarSpeedAnalyzer analyzer;
     private Button lockButton;
+    private TextView speedTextView;
+    private ProgressBar speedProgress;
+    private TextView avgSpeedText;
+    private TextView maxSpeedText;
+    private TextView lockedSpeedText;
+    private TextView statusText;
+
+    private float maxSpeed = 0f;
+    private float avgSpeed = 0f;
+    private int speedCount = 0;
+    private float speedSum = 0f;
 
     private final androidx.activity.result.ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -56,21 +68,56 @@ public class MainActivity extends ComponentActivity {
                 Preview preview = new Preview.Builder().build();
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
-                BoundingBoxView boundingBoxView = findViewById(R.id.boundingBoxView);
-                TextView speedTextView = findViewById(R.id.speedText);
+                // Connect all UI elements
+                speedTextView = findViewById(R.id.speedText);
+                speedProgress = findViewById(R.id.speedProgress);
+                avgSpeedText = findViewById(R.id.avgSpeedText);
+                maxSpeedText = findViewById(R.id.maxSpeedText);
+                lockedSpeedText = findViewById(R.id.lockedSpeedText);
+                statusText = findViewById(R.id.statusText);
                 lockButton = findViewById(R.id.lockButton);
 
                 analyzer = new CarSpeedAnalyzer((box, id, speed, locked) -> {
                     runOnUiThread(() -> {
-                        boundingBoxView.setBoundingBox(box);
+                        // Update main speed display
                         speedTextView.setText(String.format("%.0f", speed));
 
+                        // Update progress arc (max 240 km/h)
+                        int progress = (int) Math.min(speed, 240);
+                        speedProgress.setProgress(progress);
+
+                        // Update max speed
+                        if (speed > maxSpeed) {
+                            maxSpeed = speed;
+                        }
+                        maxSpeedText.setText(String.format("%.0f", maxSpeed));
+
+                        // Update average speed
+                        if (speed > 0.5f) {
+                            speedSum += speed;
+                            speedCount++;
+                            avgSpeed = speedSum / speedCount;
+                        }
+                        avgSpeedText.setText(String.format("%.0f", avgSpeed));
+
+                        // Update locked speed display
                         if (locked) {
-                            lockButton.setText("LOCKED");
-                            lockButton.setBackgroundColor(0xFF4CAF50);
+                            lockedSpeedText.setText(String.format("%.0f", speed));
+                            lockButton.setText("UNLOCK");
+                            lockButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF4CAF50));
+                            statusText.setText("LOCKED");
+                            statusText.setTextColor(0xFFFF9800);
                         } else {
                             lockButton.setText("LOCK SPEED");
-                            lockButton.setBackgroundColor(0xFFFF9800);
+                            lockButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFFF9800));
+
+                            if (speed > 0.5f) {
+                                statusText.setText("TRACKING");
+                                statusText.setTextColor(0xFF9AE6B4);
+                            } else {
+                                statusText.setText("WAITING");
+                                statusText.setTextColor(0xFF9AE6B4);
+                            }
                         }
                     });
                 });

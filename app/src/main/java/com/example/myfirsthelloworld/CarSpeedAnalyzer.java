@@ -25,14 +25,14 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
     private final OnCarDetectedListener listener;
     private final com.google.mlkit.vision.objects.ObjectDetector detector;
 
-    private Rect fixedBox = null;
-    private boolean boxInitialized = false;
+    private Rect detectionZone = null;
+    private boolean zoneInitialized = false;
     private boolean manualLock = false;
 
     private float lockedSpeed = 0f;
     private long lastDetectionTime = 0L;
     private long speedUpdateCooldown = 0L;
-    private static final long COOLDOWN_MS = 800;
+    private static final long COOLDOWN_MS = 600;
     private static final long HOLD_TIME_MS = 4000;
 
     private float lastAvgX = 0f;
@@ -54,6 +54,7 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
 
     public void toggleLock() {
         manualLock = !manualLock;
+        Log.d("SPEED_APP", manualLock ? "LOCKED" : "UNLOCKED");
     }
 
     public boolean isLocked() {
@@ -64,23 +65,22 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
     public void analyze(@NonNull ImageProxy imageProxy) {
         android.media.Image mediaImage = imageProxy.getImage();
         if (mediaImage != null) {
-            if (!boxInitialized) {
+            if (!zoneInitialized) {
                 int width = imageProxy.getWidth();
                 int height = imageProxy.getHeight();
 
-                // Box in EXACT CENTER of screen
-                int boxW = (int)(width * 0.80) ;
-                int boxH = (int)(height * 0.65);
-                int left = (width - boxW) / 2 +20 ;
-                int top = (height - boxH) / 2 + 400;  // This centers it vertically
+                // Invisible detection zone = Full middle section
+                // Covers the entire speedometer card area
+                int zoneW = (int)(width * 0.92);
+                int zoneH = (int)(height * 0.52);
+                int left = (width - zoneW) / 2;
+                int top = (int)(height * 0.18);
 
-
-                fixedBox = new Rect(left, top, left + boxW, top + boxH);
-                boxInitialized = true;
+                detectionZone = new Rect(left, top, left + zoneW, top + zoneH);
+                zoneInitialized = true;
 
                 Log.d("SPEED_APP", "Screen: " + width + "x" + height);
-                Log.d("SPEED_APP", "Box: left=" + left + " top=" + top + " w=" + boxW + " h=" + boxH);
-                Log.d("SPEED_APP", "Box center: x=" + fixedBox.centerX() + " y=" + fixedBox.centerY());
+                Log.d("SPEED_APP", "Detection zone: " + detectionZone.toShortString());
             }
 
             InputImage image = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
@@ -101,7 +101,7 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
 
             for (DetectedObject obj : objects) {
                 Rect objBox = obj.getBoundingBox();
-                if (Rect.intersects(objBox, fixedBox)) {
+                if (Rect.intersects(objBox, detectionZone)) {
                     sumX += objBox.centerX();
                     sumY += objBox.centerY();
                     count++;
@@ -120,12 +120,15 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
                         float dy = avgY - lastAvgY;
                         float disp = (float) Math.sqrt((dx * dx) + (dy * dy));
 
-                        if (disp > 5f) {
+                        if (disp > 3f) {
                             float meters = disp / PIXELS_PER_METER;
                             float newSpeed = (meters / timeSec) * 3.6f;
-                            if (newSpeed > 0.5f && newSpeed < 160f) {
-                                lockedSpeed = lockedSpeed > 0 ? lockedSpeed * 0.7f + newSpeed * 0.3f : newSpeed;
+                            if (newSpeed > 0.3f && newSpeed < 200f) {
+                                lockedSpeed = lockedSpeed > 0
+                                        ? lockedSpeed * 0.75f + newSpeed * 0.25f
+                                        : newSpeed;
                                 speedUpdateCooldown = now;
+                                Log.d("SPEED_APP", "Speed: " + String.format("%.1f km/h", lockedSpeed));
                             }
                         }
                     }
@@ -143,7 +146,8 @@ public class CarSpeedAnalyzer implements ImageAnalysis.Analyzer {
             }
         }
 
-        listener.onCarDetected(fixedBox, null, lockedSpeed, manualLock);
+        // Send null for boundingBox so nothing is drawn
+        listener.onCarDetected(null, null, lockedSpeed, manualLock);
         imageProxy.close();
     }
 }

@@ -12,74 +12,369 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Bounding Box - CENTERED on screen -->
+    <!-- Bounding Box Overlay -->
     <com.example.myfirsthelloworld.BoundingBoxView
         android:id="@+id/boundingBoxView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Speed Card at TOP -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/speedCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="#CC000000"
-        app:cardElevation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="45dp">
+    <!-- Top Gradient Scrim for readability -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:background="@drawable/scrim_top"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Bottom Gradient Scrim -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:background="@drawable/scrim_bottom"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- ===================== TOP STATUS BAR ===================== -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- App title / logo mark -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VELOCITY"
+                android:textColor="#FF9800"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.35" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Radar Active"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Live indicator pill -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/pill_dark"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp">
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/dot_live"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LIVE"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.2" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ===================== SPEEDOMETER CARD ===================== -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/speedCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="28dp"
+        app:cardBackgroundColor="#E6101418"
+        app:cardElevation="14dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="14dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:padding="14dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Header row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SPEED"
-                android:textSize="10sp"
-                android:textColor="#FF9800"
-                android:letterSpacing="0.15" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/speedText"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="CURRENT SPEED"
+                    android:textColor="#FF9800"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.25" />
+
+                <TextView
+                    android:id="@+id/statusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TRACKING"
+                    android:textColor="#9AE6B4"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/pill_status"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:letterSpacing="0.2" />
+            </LinearLayout>
+
+            <!-- Speedometer arc + value -->
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="260dp"
+                android:layout_marginTop="6dp">
+
+                <!-- Arc background -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/speed_arc_bg"
+                    android:contentDescription="@null" />
+
+                <!-- Progress arc (rotate/clip in code if you animate it) -->
+                <ProgressBar
+                    android:id="@+id/speedProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:indeterminate="false"
+                    android:max="240"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/speed_arc_progress"
+                    android:rotation="135" />
+
+                <!-- Center readout -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/speedText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="84sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-condensed"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km/h"
+                        android:textColor="#9AA3B2"
+                        android:textSize="14sp"
+                        android:letterSpacing="0.2"
+                        android:layout_marginTop="-4dp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- Stats row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="48sp"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="km/h"
-                android:textSize="12sp"
-                android:textColor="#CCCCCC" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AVG"
+                        android:textColor="#6B7280"
+                        android:textSize="10sp"
+                        android:letterSpacing="0.2" />
+                    <TextView
+                        android:id="@+id/avgSpeedText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#1F2937" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MAX"
+                        android:textColor="#6B7280"
+                        android:textSize="10sp"
+                        android:letterSpacing="0.2" />
+                    <TextView
+                        android:id="@+id/maxSpeedText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#1F2937" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LOCKED"
+                        android:textColor="#6B7280"
+                        android:textSize="10sp"
+                        android:letterSpacing="0.2" />
+                    <TextView
+                        android:id="@+id/lockedSpeedText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="#FF9800"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
-    <!-- Lock Button at BOTTOM -->
-    <Button
-        android:id="@+id/lockButton"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:text="LOCK SPEED"
-        android:textSize="14sp"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#FF9800"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="40dp" />
+    <!-- ===================== BOTTOM ACTION BAR ===================== -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="24dp"
+        app:cardBackgroundColor="#E6101418"
+        app:cardElevation="12dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Lock Speed primary action -->
+            <Button
+                android:id="@+id/lockButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="LOCK SPEED"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:letterSpacing="0.18"
+                android:background="@drawable/btn_primary"
+                android:stateListAnimator="@null" />
+
+            <!-- Secondary actions row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="GPS\nREADY"
+                    android:textColor="#9AE6B4"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.15" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#1F2937" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="DETECTION\nON"
+                    android:textColor="#FF9800"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.15" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#1F2937" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="UNIT\nKM/H"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.15" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
